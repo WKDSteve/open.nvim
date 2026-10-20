@@ -6,9 +6,6 @@ local M = {}
 ---@type OpenNvim.Config.Resolved
 local defaults = require("open.config.DEFAULTS")
 
----@type OpenNvim.Config.Resolved
-local current = vim.deepcopy(defaults)
-
 -- ---------------------------------------------------------------------------
 -- Validation (ERR-22 / ERR-50)
 -- ---------------------------------------------------------------------------
@@ -81,11 +78,6 @@ local KNOWN = {
   menu = { enable = "boolean" },
   integrations = { ui_menu = "boolean" },
 }
-
----What the last `setup()` had to reject or flag, for `:checkhealth`. Reset on
----every call so issues from an earlier setup() never linger.
----@type string[]
-local issues = {}
 
 ---`key` with the nearest known one as a hint when there is a plausible one
 ---(edit distance <= 3).
@@ -241,7 +233,57 @@ local function validate(opts)
   return clean, found_issues
 end
 
----Merge user options into the defaults.
+--- To the schema that `lib.lua.config` infers from the defaults, every option is open: the checks
+--- are `validate` above, run before the merge. An unknown top-level key is caught there as well.
+local ANY = "boolean|number|string|table|function"
+---@type table<string, string>
+local SCHEMA = {}
+for key in pairs(KNOWN) do
+  SCHEMA[key] = ANY
+end
+
+-- Whether `setup()` has run: the built-in keywords join the config only then, as before.
+local was_set_up = false
+
+local cfg = require("lib.lua.config").new(defaults, {
+  name = "open",
+  schema = SCHEMA,
+  normalize = function(opts, issues)
+    local clean, found_issues = validate(opts)
+    for key in pairs(opts) do
+      opts[key] = nil
+    end
+    for key, value in pairs(clean) do
+      opts[key] = value
+    end
+    vim.list_extend(issues, found_issues)
+  end,
+  -- The keyword map is built apart from the merge: built-ins (unless disabled), then the user's
+  -- entries on top; its values may be functions.
+  resolve = function(current)
+    if not was_set_up then return end
+    local enabled = current.builtin_keywords ~= false
+    local merged_keywords = {}
+    if enabled then
+      local ok, kw_mod = pcall(require, "open.keywords")
+      if ok then
+        for k, v in pairs(kw_mod.builtin()) do
+          merged_keywords[k] = v
+        end
+      end
+    end
+    for k, v in pairs(current.keywords or {}) do
+      merged_keywords[k] = v -- user overrides built-ins
+    end
+    current.keywords = merged_keywords
+    current.builtin_keywords = enabled
+  end,
+  notify = function(message)
+    require("lib.nvim.notify").create("[open]").warn(message)
+  end,
+})
+
+---Set the options over the defaults. Every call starts from the defaults.
 ---
 ---`opts` is validated first (ERR-50/ERR-22): a value whose shape does not
 ---fit its option is dropped so the built-in default is what actually takes
@@ -249,66 +291,26 @@ end
 ---(see `M.issues()`).
 ---@param opts OpenNvim.Config|nil
 function M.setup(opts)
-  opts = opts or {}
-
-  local clean, found_issues = validate(opts)
-  issues = found_issues
-  if #issues > 0 then
-    local notify = require("lib.nvim.notify").create("[open]")
-    for _, msg in ipairs(issues) do
-      notify.warn(msg)
-    end
-  end
-
-  -- Build keyword map separately: built-ins (unless disabled) + user overrides.
-  -- We cannot use tbl_deep_extend for this because values may be functions.
-  local merged_keywords = {}
-
-  if clean.builtin_keywords ~= false then
-    local ok, kw_mod = pcall(require, "open.keywords")
-    if ok then
-      for k, v in pairs(kw_mod.builtin()) do
-        merged_keywords[k] = v
-      end
-    end
-  end
-
-  for k, v in pairs(clean.keywords or {}) do
-    merged_keywords[k] = v -- user overrides built-ins
-  end
-
-  -- Deep-extend everything else, then attach the pre-built keyword map.
-  local opts_rest = vim.tbl_deep_extend("force", {}, clean)
-  opts_rest.keywords = nil
-  opts_rest.builtin_keywords = nil
-
-  -- `vim.deepcopy(defaults)`, not `defaults` itself: `tbl_deep_extend` only
-  -- recurses where both sides have a table and otherwise assigns by
-  -- reference, so passing the shared `defaults` table here would leak its
-  -- own sub-tables into `current` whenever `opts_rest` has no override for
-  -- that key -- a later write through `M.get()` would then permanently
-  -- mutate `defaults` for the rest of the session.
-  current = vim.tbl_deep_extend("force", vim.deepcopy(defaults), opts_rest)
-  current.keywords = merged_keywords
-  current.builtin_keywords = clean.builtin_keywords ~= false
+  was_set_up = true
+  cfg.setup(type(opts) == "table" and opts or nil)
 end
 
 ---Return a defensive copy of the active config.
 ---
----A copy, not the live `current` table: a consumer that sorts a nested list
+---A copy, not the live table: a consumer that sorts a nested list
 ---in place for display, or otherwise mutates a field it was only supposed to
 ---read, would otherwise silently rewrite the plugin's own state for the rest
 ---of the session -- and every other consumer's next `M.get()` -- instead of
 ---touching a value it owns.
 ---@return OpenNvim.Config.Resolved
 function M.get()
-  return vim.deepcopy(current)
+  return vim.deepcopy(cfg.get())
 end
 
 ---Whether verbose/debug logging is enabled (`setup({ debug = true })`).
 ---@return boolean
 function M.is_debug()
-  return current.debug == true
+  return cfg.get().debug == true
 end
 
 ---What the last `setup()` had to reject or flag: unrecognized keys (with a
@@ -316,7 +318,7 @@ end
 ---human-readable line each. Empty when everything validated cleanly.
 ---@return string[]
 function M.issues()
-  return vim.list_extend({}, issues)
+  return cfg.issues()
 end
 
 return M
