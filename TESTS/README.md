@@ -10,7 +10,7 @@ bash scripts/test.sh --file config      # only spec files whose name contains "c
 bash scripts/test.sh --json ir.json     # also write the machine-readable result
 ```
 
-The runner is [testing.nvim](https://github.com/StefanBartl/testing.nvim)
+The runner is [testing.nvim](https://github.com/WKDSteve/testing.nvim)
 (configured by `.testing.lua`: dialect `h`, i.e. the specs run on this
 directory's own `harness.lua`). It prints one line per spec and exits non-zero
 if any spec failed (`OPEN_TESTS_OK` on a full green run). CI

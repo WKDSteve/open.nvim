@@ -34,7 +34,7 @@ local function check_lib_nvim()
   if pcall(require, "lib.nvim.notify") then
     vim.health.ok("lib.nvim.notify available")
   else
-    vim.health.error("lib.nvim.notify not found", { 'Install "StefanBartl/lib.nvim"' })
+    vim.health.error("lib.nvim.notify not found", { 'Install "WKDSteve/lib.nvim"' })
   end
 
   -- The :Open command itself is built on lib.nvim.bindings.usercmd.composer.
@@ -43,7 +43,7 @@ local function check_lib_nvim()
   else
     vim.health.error(
       "lib.nvim.bindings.usercmd.composer not found — :Open will fail to register",
-      { 'Install "StefanBartl/lib.nvim"' }
+      { 'Install "WKDSteve/lib.nvim"' }
     )
   end
 end

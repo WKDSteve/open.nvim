@@ -63,17 +63,17 @@ benefit.
 
 lazy.nvim: >lua
   {
-    "StefanBartl/open.nvim",
+    "WKDSteve/open.nvim",
     cmd          = { "Open", "UrlView", "MDLinksView" },
-    dependencies = { "StefanBartl/lib.nvim" },
+    dependencies = { "WKDSteve/lib.nvim" },
     opts         = {},
   }
 <
 
 packer: >lua
   use {
-    "StefanBartl/open.nvim",
-    requires = { "StefanBartl/lib.nvim" },
+    "WKDSteve/open.nvim",
+    requires = { "WKDSteve/lib.nvim" },
     cmd      = { "Open", "UrlView", "MDLinksView" },
     config   = function() require("open").setup() end,
   }
@@ -674,7 +674,7 @@ lazy.nvim: >lua
     "axieax/urlview.nvim",
     lazy         = true,
     cmd          = { "UrlView" },
-    dependencies = { "StefanBartl/open.nvim" },
+    dependencies = { "WKDSteve/open.nvim" },
     config       = function()
       require("open.integrations.urlview").setup()
     end,

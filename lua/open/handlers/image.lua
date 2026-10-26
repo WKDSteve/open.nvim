@@ -3,7 +3,7 @@
 ---       it to an external application.
 ---@description
 --- `:Open image [scope]` draws the target with
---- [images.nvim](https://github.com/StefanBartl/images.nvim) — the image
+--- [images.nvim](https://github.com/WKDSteve/images.nvim) — the image
 --- appears in the Neovim window, no external viewer opens.
 ---
 --- Why a dedicated handler rather than routing through "default": the default

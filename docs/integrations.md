@@ -23,7 +23,7 @@ place.
   "axieax/urlview.nvim",
   lazy = true,
   cmd = { "UrlView" },
-  dependencies = { "StefanBartl/open.nvim" },
+  dependencies = { "WKDSteve/open.nvim" },
   config = function()
     require("open.integrations.urlview").setup()
   end,
@@ -82,7 +82,7 @@ from — so you can tell `notepad` and `filemanager` apart before committing.
 `open.integrations.menu` contributes context-aware entries in the shape
 [nvzone/menu](https://github.com/nvzone/menu) expects — it does **not**
 depend on `menu` and never opens it itself. The entries are built with
-[ui.nvim](https://github.com/StefanBartl/ui.nvim)'s `ui.contextmenu` helpers;
+[ui.nvim](https://github.com/WKDSteve/ui.nvim)'s `ui.contextmenu` helpers;
 without ui.nvim installed, `M.items()`/`M.submenu()` simply return no
 entries, same as when `menu.enable = false`. A host, typically your own
 `<RightMouse>` dispatcher, composes the entries into its own menu:

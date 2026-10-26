@@ -19,7 +19,7 @@ the document opens in a Neovim split.
 
 This folder is the machine-readable catalog behind `docmap.nvim`'s
 Features tab, following the shape documented in
-[`FEATURES_FORMAT.md`](https://github.com/StefanBartl/docmap.nvim/blob/main/docs/FEATURES_FORMAT.md).
+[`FEATURES_FORMAT.md`](https://github.com/WKDSteve/docmap.nvim/blob/main/docs/FEATURES_FORMAT.md).
 
 Three themes:
 

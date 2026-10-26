@@ -74,9 +74,9 @@ Each link is an `OpenNvim.Viewer.Link`:
 makes `urls` include `[text](https://…)`.
 
 The scope/render/sink primitives underneath are
-[`lib.nvim.harvest`](https://github.com/StefanBartl/lib.nvim/blob/main/lua/lib/nvim/harvest/README.md)
+[`lib.nvim.harvest`](https://github.com/WKDSteve/lib.nvim/blob/main/lua/lib/nvim/harvest/README.md)
 and are reusable outside open.nvim. The picker is
-[`ui.kit.chooser`](https://github.com/StefanBartl/ui.nvim).
+[`ui.kit.chooser`](https://github.com/WKDSteve/ui.nvim).
 
 See [docs/commands.md](commands.md) for the full list of handlers and scope
 tokens, and [docs/configuration.md](configuration.md) for `setup()` options.

@@ -105,7 +105,7 @@ next to that file rather than trying to `cd` into it.
 ## Image handler
 
 `:Open image` renders the target image inside the terminal via
-[images.nvim](https://github.com/StefanBartl/images.nvim) instead of
+[images.nvim](https://github.com/WKDSteve/images.nvim) instead of
 launching an external viewer that steals window focus. images.nvim is a
 soft dependency: when it isn't installed, or its `show()` call reports
 failure, the handler falls back to the system default application handler

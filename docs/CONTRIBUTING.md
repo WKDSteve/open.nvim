@@ -1,7 +1,7 @@
 # Contributing to open.nvim
 
 Thank you for your interest! Bugs, ideas and questions are welcome in the
-[issue tracker](https://github.com/StefanBartl/open.nvim/issues); pull requests
+[issue tracker](https://github.com/WKDSteve/open.nvim/issues); pull requests
 very welcome.
 
 ## Getting the repository into a session
@@ -14,7 +14,7 @@ vim.opt.rtp:prepend("/path/to/open.nvim")
 require("open").setup({})
 ```
 
-[lib.nvim](https://github.com/StefanBartl/lib.nvim) has to be on the runtime
+[lib.nvim](https://github.com/WKDSteve/lib.nvim) has to be on the runtime
 path too — the `:Open` command layer is built on it. Nothing else is required;
 everything a handler needs is resolved from the platform at runtime.
 
@@ -100,7 +100,7 @@ bash scripts/test.sh                  # every spec
 bash scripts/test.sh --file config    # only spec files whose name contains "config"
 ```
 
-The runner is [testing.nvim](https://github.com/StefanBartl/testing.nvim).
+The runner is [testing.nvim](https://github.com/WKDSteve/testing.nvim).
 Exit 0 is a pass. testing.nvim, lib.nvim and ui.nvim are expected as sibling
 checkouts or under `.deps/` (see [`TESTS/README.md`](../TESTS/README.md)); a
 missing one is a loud error, never a silent skip.

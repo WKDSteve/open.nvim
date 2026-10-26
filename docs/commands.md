@@ -1,7 +1,7 @@
 # open.nvim — Command Reference
 
 Two command families, both built via
-[`lib.nvim.bindings.usercmd.composer`](https://github.com/StefanBartl/lib.nvim) with
+[`lib.nvim.bindings.usercmd.composer`](https://github.com/WKDSteve/lib.nvim) with
 `<Tab>` completion:
 
 - `:Open [target] [scope]` — route one thing to a handler
@@ -146,7 +146,7 @@ positional arguments.
 ### The picker
 
 The results list is ui.nvim's
-[`ui.kit.chooser`](https://github.com/StefanBartl/ui.nvim), which means:
+[`ui.kit.chooser`](https://github.com/WKDSteve/ui.nvim), which means:
 
 - the **whole current line** is highlighted (`CursorLine:KitSelection`)
 - the cursor moves **only up and down** — `j`/`k` and the arrow keys; `h`,
