@@ -306,7 +306,11 @@ return function(H)
     package.loaded["config.neotree.utils.node"] = {
       get_current = function()
         cfg_called = true
-        return { get_id = function() return "/from/private/config" end }
+        return {
+          get_id = function()
+            return "/from/private/config"
+          end,
+        }
       end,
     }
     package.loaded["neo-tree.sources.manager"] = {
@@ -314,7 +318,11 @@ return function(H)
         return {
           tree = {
             get_node = function()
-              return { get_id = function() return "/from/neo-tree/state" end }
+              return {
+                get_id = function()
+                  return "/from/neo-tree/state"
+                end,
+              }
             end,
           },
         }
