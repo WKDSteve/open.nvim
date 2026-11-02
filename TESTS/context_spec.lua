@@ -298,6 +298,38 @@ return function(H)
     H.falsy(signals.tree_path, "tree_path stays nil when the tree plugin is absent")
   end
 
+  -- gather(): neo-tree node resolved through neo-tree's own state only ---------
+  do
+    local saved_mgr = package.loaded["neo-tree.sources.manager"]
+    local saved_cfg = package.loaded["config.neotree.utils.node"]
+    local cfg_called = false
+    package.loaded["config.neotree.utils.node"] = {
+      get_current = function()
+        cfg_called = true
+        return { get_id = function() return "/from/private/config" end }
+      end,
+    }
+    package.loaded["neo-tree.sources.manager"] = {
+      get_state = function()
+        return {
+          tree = {
+            get_node = function()
+              return { get_id = function() return "/from/neo-tree/state" end }
+            end,
+          },
+        }
+      end,
+    }
+    local buf = H.scratch({ "x" }, "neo-tree")
+    local ok, signals = pcall(context.gather)
+    H.ok(ok, "gather() does not error with a stubbed neo-tree state")
+    H.eq(signals.tree_path, "/from/neo-tree/state", "the node comes from state.tree:get_node()")
+    H.falsy(cfg_called, "the personal config.neotree.utils.node module is never consulted")
+    package.loaded["neo-tree.sources.manager"] = saved_mgr
+    package.loaded["config.neotree.utils.node"] = saved_cfg
+    pcall(vim.api.nvim_buf_delete, buf, { force = true })
+  end
+
   -- gather(): BUG -- the visual signal can never be the selection the user
   -- is actually making, only ever nil or a stale, unrelated one. It reads
   -- the `'<`/`'>` marks, which Neovim commits only once Visual mode is

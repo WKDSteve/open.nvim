@@ -142,18 +142,6 @@ local function resolve_neotree_path()
   local ok_s, state = pcall(manager.get_state, source)
   if not ok_s or not state then return nil end
 
-  -- Try config-specific node utility first (pcall-guarded: config-specific dep)
-  local ok_nu, node_utils = pcall(require, "config.neotree.utils.node")
-  if ok_nu then
-    -- config.neotree's own stand-in class, not neo-tree's: same shape,
-    -- different name (F1) -- neo-tree is a soft dep so no @class inheritance.
-    local node = node_utils.get_current(state --[[@as Cfg.NeoTree.State]])
-    if node then
-      local path = node:get_id()
-      if type(path) == "string" and path ~= "" then return path end
-    end
-  end
-
   if state.tree then
     local ok_n, node = pcall(state.tree.get_node, state.tree)
     if ok_n and node then
