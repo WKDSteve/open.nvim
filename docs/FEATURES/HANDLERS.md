@@ -16,8 +16,8 @@ duplicated in this plugin.
 
 ## Office document auto-redirect
 
-`.docx`, `.xlsx`, `.pptx` (and their legacy/OpenDocument counterparts) are
-binary containers — Neovim reading one as text just shows garbage. A
+`.docx`, `.xlsx`, `.pptx` (and their legacy and OpenDocument counterparts,
+plus Outlook's `.msg` and `.oft`) are binary containers — Neovim reading one as text just shows garbage. A
 `BufReadCmd` autocmd intercepts a read of any configured extension, hands
 the path to the same `lib.nvim.cross.open_default` dispatch the `default`
 handler uses, and wipes the placeholder buffer Neovim created for the read.
@@ -28,7 +28,7 @@ plugin's `<CR>` — not only `:Open default`.
 - **Autocmds:** [`../BINDINGS.md#autocmds`](../BINDINGS.md#autocmds)
 - **Config:** `opts.office_open.enabled` (default `true`),
   `opts.office_open.extensions` (default
-  `{"doc","docx","xls","xlsx","ppt","pptx"}`)
+  `{"doc","docx","xls","xlsx","ppt","pptx","msg","oft","odt","ods","odp"}`)
 
 ## Browser handlers
 

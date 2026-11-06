@@ -175,7 +175,7 @@ return function(H)
     config.setup({ office_open = { extensions = "docx" } })
     H.eq(
       #config.get().office_open.extensions,
-      6,
+      #require("open.config.DEFAULTS").office_open.extensions,
       "office_open.extensions fell back to its default list"
     )
     H.contains(
@@ -211,7 +211,7 @@ return function(H)
     config.setup({ office_open = { extensions = { 42, "docx" } } })
     H.eq(
       #config.get().office_open.extensions,
-      6,
+      #require("open.config.DEFAULTS").office_open.extensions,
       "office_open.extensions fell back to its default list on a non-string element"
     )
     H.contains(

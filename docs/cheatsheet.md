@@ -41,12 +41,13 @@
 ## Office document auto-redirect
 
 Not a handler — a `BufReadCmd` autocmd. Reading `.doc`/`.docx`/`.xls`/
-`.xlsx`/`.ppt`/`.pptx` (via `:e`, `gf`, a picker, or a tree `<CR>`) opens the
-system app (Word/Excel/PowerPoint/…) instead of loading garbled text.
+`.xlsx`/`.ppt`/`.pptx`, Outlook's `.msg`/`.oft` or OpenDocument's `.odt`/`.ods`/
+`.odp` (via `:e`, `gf`, a picker, or a tree `<CR>`) opens the system app
+(Word/Excel/PowerPoint/Outlook/…) instead of loading garbled text.
 
 ```lua
 require("open").setup({
-  office_open = { enabled = true, extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx" } },
+  office_open = { enabled = true, extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx", "msg", "oft", "odt", "ods", "odp" } },
 })
 ```
 

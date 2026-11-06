@@ -702,6 +702,17 @@ return function(H)
         "placeholder buffer is wiped after the redirect"
       )
 
+      -- The default list covers Outlook mail and templates and OpenDocument: a
+      -- .msg used to land in a buffer as binary text.
+      require("open").setup({})
+      for _, ext in ipairs({ "msg", "oft", "odt", "ods", "odp" }) do
+        seen_targets = {}
+        local other = dir .. "/mail." .. ext
+        H.write(other, "binary container")
+        vim.cmd("edit " .. vim.fn.fnameescape(other))
+        H.eq(#seen_targets, 1, "the default office_open list redirects a ." .. ext .. " read")
+      end
+
       package.loaded[mod_name] = orig_open_default
 
       -- enabled=false clears the autocmd instead of stacking a disabled copy.

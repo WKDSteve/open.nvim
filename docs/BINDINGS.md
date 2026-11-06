@@ -88,7 +88,7 @@ vim.keymap.set("n", "<leader>oo", "<Cmd>Open<CR>")
 
 | Event | Pattern | Registered in |
 |---|---|---|
-| `BufReadCmd` | `opts.office_open.extensions`, default `*.doc,*.docx,*.xls,*.xlsx,*.ppt,*.pptx` | [lua/open/office_open.lua](../lua/open/office_open.lua) |
+| `BufReadCmd` | `opts.office_open.extensions`, default `*.doc,*.docx,*.xls,*.xlsx,*.ppt,*.pptx,*.msg,*.oft,*.odt,*.ods,*.odp` | [lua/open/office_open.lua](../lua/open/office_open.lua) |
 
 Redirects a read of any matching path to the system default application
 (`lib.nvim.cross.open_default` — the same dispatch as the `default`

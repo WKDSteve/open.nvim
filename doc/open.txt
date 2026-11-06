@@ -104,9 +104,9 @@ packer: >lua
       reveal  = true,  -- false: navigate instead of reveal/select
       command = nil,   -- launcher override: "thunar" or { "dolphin", "--select" }; the path is appended
     },
-    office_open = {                        -- redirect MS Office docs to the system app
+    office_open = {                        -- redirect Office, Outlook and ODF docs to the system app
       enabled    = true,
-      extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx" },
+      extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx", "msg", "oft", "odt", "ods", "odp" },
     },
     debug            = false, -- true: log gather/resolve/dispatch steps to :messages
     picker           = { enabled = false }, -- true: show a picker on ambiguous no-target calls
@@ -238,12 +238,13 @@ packer: >lua
 ------------------------------------------------------------------------------
 4.1 Office document auto-redirect                          *open-office-open*
 
-`.doc`/`.docx`, `.xls`/`.xlsx`, `.ppt`/`.pptx` are binary containers — there
-is nothing useful Neovim can show by reading one as text. A `BufReadCmd`
+`.doc`/`.docx`, `.xls`/`.xlsx`, `.ppt`/`.pptx`, Outlook's `.msg`/`.oft` and
+OpenDocument's `.odt`/`.ods`/`.odp` are binary containers — there is nothing
+useful Neovim can show by reading one as text. A `BufReadCmd`
 autocmd (see |open-architecture|, `open/office_open.lua`) intercepts a read
 of any configured extension, hands the path to the same
 `lib.nvim.cross.open_default` dispatch the `default` handler uses (Word,
-Excel, PowerPoint, or whatever the OS has registered), and wipes the empty
+Excel, PowerPoint, Outlook, or whatever the OS has registered), and wipes the empty
 placeholder buffer Neovim created for the read.
 
 Unlike everything else in this plugin, this is NOT something you invoke:
@@ -256,7 +257,7 @@ Configure via `opts.office_open` (see |open-config|): >lua
   require("open").setup({
     office_open = {
       enabled    = true,
-      extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx" },
+      extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx", "msg", "oft", "odt", "ods", "odp" },
     },
   })
 <

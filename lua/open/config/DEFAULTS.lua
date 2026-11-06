@@ -47,13 +47,25 @@ return {
     command = nil,
   },
 
-  -- Redirect MS Office documents (and compatible formats) to the system
-  -- default application instead of loading them as a text buffer. Fires on
+  -- Redirect MS Office documents, Outlook mail and templates (msg, oft) and
+  -- OpenDocument files to the system default application instead of loading them as a text buffer. Fires on
   -- ANY read of a matching path — :e, gf, a picker, filetree.nvim's <CR> —
   -- via a BufReadCmd autocmd, not just `:Open default`.
   office_open = {
     enabled = true,
-    extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx" },
+    extensions = {
+      "doc",
+      "docx",
+      "xls",
+      "xlsx",
+      "ppt",
+      "pptx",
+      "msg",
+      "oft",
+      "odt",
+      "ods",
+      "odp",
+    },
   },
 
   -- When true, logs every context-gather and dispatch step to :messages.

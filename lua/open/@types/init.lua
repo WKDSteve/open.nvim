@@ -199,7 +199,7 @@
 ---BufReadCmd autocmd, so `.docx`/`.xlsx`/`.pptx` never load as garbled text.
 ---@class OpenNvim.OfficeOpen.Config
 ---@field enabled? boolean  Install the BufReadCmd redirect (default true)
----@field extensions? string[]  Bare extensions, no leading dot (default {"doc","docx","xls","xlsx","ppt","pptx"})
+---@field extensions? string[]  Bare extensions, no leading dot (default {"doc","docx","xls","xlsx","ppt","pptx","msg","oft","odt","ods","odp"})
 
 ---@class OpenNvim.Filemanager.Config
 ---@field reveal boolean  true (default): reveal/select a file; false: navigate to its parent dir

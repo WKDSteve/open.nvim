@@ -73,7 +73,7 @@ require("open").setup({
   -- tree plugins alike — not just `:Open default`.
   office_open = {
     enabled    = true,
-    extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx" },
+    extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx", "msg", "oft", "odt", "ods", "odp" },
   },
 
   -- When true, logs every context-gather and dispatch step to :messages.
@@ -203,13 +203,13 @@ filetree.nvim's `<leader>fm`, so platform fixes land in both at once.
 | Key | Default | Meaning |
 |---|---|---|
 | `enabled` | `true` | Install the `BufReadCmd` redirect. |
-| `extensions` | `{"doc","docx","xls","xlsx","ppt","pptx"}` | Bare extensions (no dot) to redirect. |
+| `extensions` | `{"doc","docx","xls","xlsx","ppt","pptx","msg","oft","odt","ods","odp"}` | Bare extensions (no dot) to redirect. |
 
 ```lua
 require("open").setup({
   office_open = {
     enabled    = true,
-    -- Add ODF formats too, for example:
+    -- Replaces the default list; to keep Outlook files as text, for example:
     extensions = { "doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods", "odp" },
   },
 })
