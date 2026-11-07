@@ -344,6 +344,42 @@ return function(H)
           "without a select-capable file manager, reveal=true degrades to reveal=false"
         )
       end
+
+      -- The macOS commands on every host: testing.fake_programs puts a recording `open` first on the PATH and
+      -- makes lib.nvim.cross.platform answer "macOS", so the real dispatch and the real spawn run and only the
+      -- program at the end is a stand-in. It proves the command line, not what Finder does with it.
+      local has_fake, fake_programs = pcall(require, "testing.fake_programs")
+      if has_fake and vim.fn.has("wsl") == 0 then
+        local fake = fake_programs.new({ "open" })
+        local function reveal(on)
+          fake:reset()
+          require("open").setup({ filemanager = { reveal = on } })
+          fake:as("macos", function()
+            fake:with_path(function()
+              registered.run({ text = file, is_url = false, is_path = true })
+              vim.wait(10000, function()
+                return #fake:calls("open") > 0
+              end, 20)
+            end)
+          end)
+          local c = fake:calls("open")[1]
+          return c and c.argv or {}
+        end
+        local selected = reveal(true)
+        H.eq(selected[1], "-R", "macOS: reveal=true runs `open -R`")
+        H.ok(
+          (selected[2] or ""):find("reveal_test.txt", 1, true) ~= nil,
+          "macOS: ... on the file itself (" .. table.concat(selected, " ") .. ")"
+        )
+        local opened = reveal(false)
+        H.eq(#opened, 1, "macOS: reveal=false runs `open <dir>`, one argument")
+        H.ok(
+          opened[1] ~= nil and opened[1]:find("reveal_test.txt", 1, true) == nil,
+          "macOS: ... on the folder, not the file (" .. table.concat(opened, " ") .. ")"
+        )
+        require("open").setup({ filemanager = { reveal = false } })
+        fake:close()
+      end
     end)
   end
 
