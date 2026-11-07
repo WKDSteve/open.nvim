@@ -247,6 +247,12 @@ of any configured extension, hands the path to the same
 Excel, PowerPoint, Outlook, or whatever the OS has registered), and wipes the empty
 placeholder buffer Neovim created for the read.
 
+`.msg` and `.oft` are checked first: ROS message files share the `.msg`
+extension and are text. Only a file whose first 8 bytes are the OLE compound
+file signature (`D0 CF 11 E0 A1 B1 1A E1`, what Outlook writes) is
+redirected; any other is read into a normal buffer as `:edit` would. A file
+that does not exist or cannot be opened is redirected as before.
+
 Unlike everything else in this plugin, this is NOT something you invoke:
 `BufReadCmd` is Neovim's own read hook, so it fires for `:e`, `gf`, a picker
 result, or a tree plugin's `<CR>` alike — including filetree.nvim,

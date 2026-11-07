@@ -203,7 +203,7 @@ filetree.nvim's `<leader>fm`, so platform fixes land in both at once.
 | Key | Default | Meaning |
 |---|---|---|
 | `enabled` | `true` | Install the `BufReadCmd` redirect. |
-| `extensions` | `{"doc","docx","xls","xlsx","ppt","pptx","msg","oft","odt","ods","odp"}` | Bare extensions (no dot) to redirect. |
+| `extensions` | `{"doc","docx","xls","xlsx","ppt","pptx","msg","oft","odt","ods","odp"}` | Bare extensions (no dot) to redirect. A `.msg`/`.oft` is only redirected when it starts with the OLE signature `D0 CF 11 E0 A1 B1 1A E1`; a text one (ROS message) opens as a buffer. |
 
 ```lua
 require("open").setup({

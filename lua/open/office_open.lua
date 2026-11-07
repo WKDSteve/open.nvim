@@ -32,11 +32,59 @@ local function build_pattern(extensions)
   return table.concat(parts, ",")
 end
 
+-- Extensions shared with text formats: ROS message files are `.msg` too. A
+-- file with one of these is only redirected when it starts with the OLE
+-- compound file signature Outlook writes.
+local OLE_CHECKED = { msg = true, oft = true }
+local OLE_SIGNATURE = "\208\207\017\224\161\177\026\225" -- D0 CF 11 E0 A1 B1 1A E1
+
+---True when `path` must go to the system app. For `.msg`/`.oft` that means
+---the first 8 bytes are the OLE signature; a file that cannot be opened keeps
+---the plain redirect (the system app reports the error, as before).
+---@internal
+---@param path string
+---@return boolean
+local function should_redirect(path)
+  local ext = (vim.fn.fnamemodify(path, ":e") or ""):lower()
+  if not OLE_CHECKED[ext] then return true end
+  local fh = io.open(path, "rb")
+  if not fh then return true end
+  local head = fh:read(8)
+  fh:close()
+  return head == OLE_SIGNATURE
+end
+
+---Do the read Neovim skipped because a `BufReadCmd` matched: load `path`
+---into `buf` as `:edit` would (fileformat/encoding via `++edit`), leave it
+---unmodified without an undo step, then fire BufReadPost so filetype
+---detection and the user's BufRead autocmds run.
+---@internal
+---@param buf integer
+---@param path string
+local function read_as_text(buf, path)
+  local set, get = vim.api.nvim_set_option_value, vim.api.nvim_get_option_value
+  vim.api.nvim_buf_call(buf, function()
+    -- The local value (-123456 = "use the global one") is put back as it was.
+    local undolevels = get("undolevels", { scope = "local" })
+    set("undolevels", -1, { scope = "local" })
+    vim.cmd("silent keepalt read ++edit " .. vim.fn.fnameescape(path))
+    vim.cmd("silent 1delete _")
+    set("undolevels", undolevels, { scope = "local" })
+  end)
+  set("modified", false, { buf = buf })
+  vim.api.nvim_exec_autocmds("BufReadPost", { buffer = buf, modeline = true })
+end
+
 ---`BufReadCmd` callback: open externally, then wipe the placeholder buffer.
+---A `.msg`/`.oft` without the OLE signature is read as a normal text buffer.
 ---@internal
 ---@param args table  autocmd callback args (`{ buf, file, match, ... }`)
 local function on_read(args)
   local path = vim.fn.fnamemodify(args.file, ":p")
+  if not should_redirect(path) then
+    read_as_text(args.buf, path)
+    return
+  end
   local ok, err = require("lib.nvim.cross.open_default")(path)
   if ok then
     notify.info("Opened externally: " .. path)

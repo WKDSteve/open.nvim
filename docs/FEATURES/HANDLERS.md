@@ -22,7 +22,10 @@ plus Outlook's `.msg` and `.oft`) are binary containers — Neovim reading one a
 the path to the same `lib.nvim.cross.open_default` dispatch the `default`
 handler uses, and wipes the placeholder buffer Neovim created for the read.
 Fires on any read of a matching path — `:e`, `gf`, a picker, a tree
-plugin's `<CR>` — not only `:Open default`.
+plugin's `<CR>` — not only `:Open default`. A `.msg` or `.oft` is only
+redirected when its first 8 bytes are the OLE compound file signature
+(`D0 CF 11 E0 A1 B1 1A E1`); a text file with that extension (a ROS message
+file, for example) is read into a normal buffer.
 
 - **Module:** `open/office_open.lua`
 - **Autocmds:** [`../BINDINGS.md#autocmds`](../BINDINGS.md#autocmds)

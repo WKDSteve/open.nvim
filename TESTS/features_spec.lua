@@ -740,14 +740,53 @@ return function(H)
 
       -- The default list covers Outlook mail and templates and OpenDocument: a
       -- .msg used to land in a buffer as binary text.
+      -- .msg/.oft are only redirected when they carry the OLE signature.
+      local ole = "\208\207\017\224\161\177\026\225 rest of the compound file"
       require("open").setup({})
       for _, ext in ipairs({ "msg", "oft", "odt", "ods", "odp" }) do
         seen_targets = {}
         local other = dir .. "/mail." .. ext
-        H.write(other, "binary container")
+        H.write(other, (ext == "msg" or ext == "oft") and ole or "binary container")
         vim.cmd("edit " .. vim.fn.fnameescape(other))
         H.eq(#seen_targets, 1, "the default office_open list redirects a ." .. ext .. " read")
       end
+
+      -- A ROS message file shares the .msg extension but is text: no OLE
+      -- signature, so it is read into a normal buffer instead of redirected.
+      for _, ext in ipairs({ "msg", "oft" }) do
+        seen_targets = {}
+        local ros = dir .. "/Pose." .. ext
+        H.write(ros, "float64 x\r\nstring frame_id\r\n")
+        local post_read = 0
+        local au = vim.api.nvim_create_autocmd("BufReadPost", {
+          pattern = "*." .. ext,
+          callback = function()
+            post_read = post_read + 1
+          end,
+        })
+        vim.cmd("edit " .. vim.fn.fnameescape(ros))
+        vim.api.nvim_del_autocmd(au)
+        local buf = vim.api.nvim_get_current_buf()
+        H.eq(#seen_targets, 0, "a ." .. ext .. " without the OLE signature is not redirected")
+        H.eq(
+          table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), "|"),
+          "float64 x|string frame_id",
+          "a text ." .. ext .. " is read into the buffer as :edit would"
+        )
+        H.eq(vim.bo[buf].fileformat, "dos", "the text read keeps ++edit's fileformat detection")
+        H.falsy(
+          vim.bo[buf].modified,
+          "the text ." .. ext .. " buffer is not modified after the read"
+        )
+        H.eq(post_read, 1, "BufReadPost fires once for the text ." .. ext .. " read")
+        vim.wait(50)
+        H.ok(vim.api.nvim_buf_is_valid(buf), "the text ." .. ext .. " buffer is not wiped")
+      end
+
+      -- A .msg that does not exist keeps today's behaviour: it is redirected.
+      seen_targets = {}
+      vim.cmd("edit " .. vim.fn.fnameescape(dir .. "/missing.msg"))
+      H.eq(#seen_targets, 1, "a missing .msg is still handed to the system app")
 
       package.loaded[mod_name] = orig_open_default
 
