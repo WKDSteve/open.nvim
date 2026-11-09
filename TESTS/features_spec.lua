@@ -169,6 +169,27 @@ return function(H)
       return orig_expand(x, ...)
     end
 
+    -- Only the expand() calls matter here: no handler may spawn for real (on WSL the filemanager handler would run
+    -- `wslpath` on the payload, on Windows PowerShell), so the process exits are stubbed for the block.
+    local run = require("lib.nvim.cross.run")
+    local wslpath = require("lib.nvim.cross.fs.wslpath")
+    local orig_run_detached, orig_system, orig_to_win = run.run_detached, vim.system, wslpath.to_win
+    run.run_detached = function()
+      return true
+    end
+    vim.system = function(_cmd, _opts, on_exit)
+      local result = { code = 0, signal = 0, stdout = "", stderr = "" }
+      if on_exit then on_exit(result) end
+      return {
+        wait = function()
+          return result
+        end,
+      }
+    end
+    wslpath.to_win = function()
+      return nil
+    end
+
     local fm_h
     require("open.handlers.filemanager").register_all(function(h)
       fm_h = h
@@ -191,6 +212,7 @@ return function(H)
     term_h.run({ text = payload, is_url = false, is_path = false })
 
     vim.fn.expand = orig_expand
+    run.run_detached, vim.system, wslpath.to_win = orig_run_detached, orig_system, orig_to_win
     H.eq(seen, 0, "no handler ever calls vim.fn.expand() with the raw context text")
   end
 
@@ -301,6 +323,16 @@ return function(H)
         }
       end
 
+      -- Under WSL the dispatch first converts the target with `wslpath -w`, a process of its own; answer it here so
+      -- seen_cmd holds the reveal command and not the conversion (lib.nvim.cross.fs.wslpath is a table of
+      -- functions that reveal_in_fm looks up at call time).
+      local wslpath = require("lib.nvim.cross.fs.wslpath")
+      local orig_to_win = wslpath.to_win
+      wslpath.to_win = function(p)
+        local win = p:gsub("/", "\\")
+        return "C:\\fake" .. win
+      end
+
       require("open").setup({ filemanager = { reveal = true } })
       registered.run({ text = file, is_url = false, is_path = true })
       local reveal_cmd = table.concat(seen_cmd, " ")
@@ -311,6 +343,7 @@ return function(H)
 
       run.run_detached = orig_run_detached
       vim.system = orig_vim_system
+      wslpath.to_win = orig_to_win
 
       -- Whether the two settings can differ at all is a property of the host.
       -- Windows (explorer /select,<file> vs. explorer <dir>) and macOS
@@ -320,9 +353,13 @@ return function(H)
       -- degrades to opening the parent directory by design (see
       -- lib.nvim.cross.reveal_in_fm's LINUX_MANAGERS table), which is exactly
       -- what reveal = false does. Asserting a difference there would be
-      -- asserting that the runner has a desktop installed.
+      -- asserting that the runner has a desktop installed. WSL is not that
+      -- Linux: lib.nvim hands the target to explorer.exe through `wslpath -w`
+      -- there, which selects a file like on Windows, so it is asked with the
+      -- same detection lib.nvim uses (a WSL kernel without interop is Linux).
       local can_select = true
-      if vim.fn.has("unix") == 1 and vim.fn.has("mac") == 0 then
+      local is_wsl = require("lib.nvim.cross.platform.is_wsl")()
+      if not is_wsl and vim.fn.has("unix") == 1 and vim.fn.has("mac") == 0 then
         can_select = false
         for _, mgr in ipairs({ "nautilus", "nemo", "dolphin", "thunar", "caja" }) do
           if vim.fn.executable(mgr) == 1 then
@@ -349,7 +386,9 @@ return function(H)
       -- makes lib.nvim.cross.platform answer "macOS", so the real dispatch and the real spawn run and only the
       -- program at the end is a stand-in. It proves the command line, not what Finder does with it.
       local has_fake, fake_programs = pcall(require, "testing.fake_programs")
-      if has_fake and vim.fn.has("wsl") == 0 then
+      -- lib.nvim caches its WSL answer, so faking "macOS" does not reach a WSL host's dispatch: skip it there.
+      -- vim.fn.has("wsl") is no substitute, it can be 0 where lib.nvim (rightly) sees WSL.
+      if has_fake and not is_wsl then
         local fake = fake_programs.new({ "open" })
         local function reveal(on)
           fake:reset()
