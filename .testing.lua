@@ -59,6 +59,8 @@ return {
       platform = { "suite", "conformance" },
       -- `testing ci land`: a check branch ci/** runs the hosted legs, main moves to a commit only once it is green there
       land = true,
+      -- the job that moves `ci-verified` after a green push
+      publish = { why = "gitsuite.nvim checks out open.nvim at ci-verified." },
     },
     steps = {
       ["workflow-in-sync"] = { preset = "workflow-in-sync" },
