@@ -48,4 +48,18 @@ return {
       },
     },
   },
+  -- The pipeline is derived (stylua, luacheck, suite, conformance, surface: `scripts/test.sh ci list`). The GitHub
+  -- workflow is generated from `workflow`: `scripts/test.sh init --workflow=public --force` writes it (testing.nvim
+  -- docs/WORKFLOW-CI.md), the step workflow-in-sync checks it.
+  ci = {
+    workflow = {
+      name = "open.nvim",
+      layout = "hosted",
+      -- the steps that depend on the platform: the windows and macOS legs run only these
+      platform = { "suite", "conformance" },
+    },
+    steps = {
+      ["workflow-in-sync"] = { preset = "workflow-in-sync" },
+    },
+  },
 }
