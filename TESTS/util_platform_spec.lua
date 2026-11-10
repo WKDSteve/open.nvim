@@ -107,12 +107,13 @@ return function(H)
       H.eq(type(p1[field]), "boolean", field .. " is a boolean")
     end
 
-    -- Exactly one desktop-OS flag should describe this runner (WSL counts as
-    -- both is_wsl and is_linux, which is documented, not a bug).
+    -- Exactly one desktop OS describes this runner. lib.nvim's is_linux excludes
+    -- WSL (is_wsl is set there instead), so Linux and WSL count as one.
     local count = 0
-    for _, field in ipairs({ "is_win", "is_mac", "is_linux" }) do
-      if p1[field] then count = count + 1 end
+    for _, on in ipairs({ p1.is_win, p1.is_mac, p1.is_linux or p1.is_wsl }) do
+      if on then count = count + 1 end
     end
-    H.eq(count, 1, "exactly one of is_win/is_mac/is_linux is true")
+    H.eq(count, 1, "exactly one of is_win/is_mac/is_linux-or-is_wsl is true")
+    H.eq(p1.is_linux and p1.is_wsl, false, "is_linux and is_wsl are never both true")
   end
 end
