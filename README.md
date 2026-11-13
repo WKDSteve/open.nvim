@@ -92,3 +92,21 @@ question each page answers.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 open.nvim is released under the [MIT License](https://opensource.org/licenses/MIT).
+
+<!-- connections:begin (written by the app-icons tool of the workshop; change integrations.json there, not this block) -->
+## Connections
+
+![open.nvim: what it uses and what uses it](assets/graphs/open.nvim.png)
+
+**Uses**
+
+- [images.nvim](https://github.com/WKDSteve/images.nvim): The image handler of open.nvim opens an image through images.nvim when it is installed. ([picture](assets/graphs/pair/open.nvim--images.nvim.png))
+- [ui.nvim](https://github.com/WKDSteve/ui.nvim): The menu integration of open.nvim uses the context menu of ui.nvim (`ui.contextmenu`). ([picture](assets/graphs/pair/open.nvim--ui.nvim.png))
+- [lib.nvim](https://github.com/WKDSteve/lib.nvim): the shared base of the plugins.
+
+**Used by**
+
+- [buffer-ctx.nvim](https://github.com/WKDSteve/buffer-ctx.nvim): `:OpenInBrowser` of buffer-ctx.nvim delegates to the browser handler of open.nvim when it is installed. ([picture](assets/graphs/pair/buffer-ctx.nvim--open.nvim.png))
+- [gitsuite.nvim](https://github.com/WKDSteve/gitsuite.nvim): gitsuite.nvim opens the web address of a repository through the registry of open.nvim (`open.registry`) when it is installed. ([picture](assets/graphs/pair/gitsuite.nvim--open.nvim.png))
+- [hover.nvim](https://github.com/WKDSteve/hover.nvim): hover.nvim opens the target it is showing with open.nvim (`open.open`), so a media file goes to its registered player and not to the file manager. ([picture](assets/graphs/pair/hover.nvim--open.nvim.png))
+<!-- connections:end -->
