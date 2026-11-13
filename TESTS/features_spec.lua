@@ -385,10 +385,14 @@ return function(H)
       -- The macOS commands on every host: testing.fake_programs puts a recording `open` first on the PATH and
       -- makes lib.nvim.cross.platform answer "macOS", so the real dispatch and the real spawn run and only the
       -- program at the end is a stand-in. It proves the command line, not what Finder does with it.
-      local has_fake, fake_programs = pcall(require, "testing.fake_programs")
-      -- lib.nvim caches its WSL answer, so faking "macOS" does not reach a WSL host's dispatch: skip it there.
+      -- testing.nvim is the runner of this suite, so its module is always there: a plain require, a missing one is
+      -- an error instead of silently skipping these checks.
+      local fake_programs = require("testing.fake_programs")
+      -- lib.nvim caches its WSL answer, so faking "macOS" does not reach a WSL host's dispatch: n/a there.
       -- vim.fn.has("wsl") is no substitute, it can be 0 where lib.nvim (rightly) sees WSL.
-      if has_fake and not is_wsl then
+      if is_wsl then
+        print("n/a  features_spec: the macOS reveal commands cannot be faked on a WSL host")
+      else
         local fake = fake_programs.new({ "open" })
         local function reveal(on)
           fake:reset()
