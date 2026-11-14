@@ -314,7 +314,7 @@ return function(H)
       end,
     }
     package.loaded["neo-tree.sources.manager"] = {
-      get_state = function()
+      get_state_for_window = function()
         return {
           tree = {
             get_node = function()
@@ -335,6 +335,42 @@ return function(H)
     H.falsy(cfg_called, "the personal config.neotree.utils.node module is never consulted")
     package.loaded["neo-tree.sources.manager"] = saved_mgr
     package.loaded["config.neotree.utils.node"] = saved_cfg
+    pcall(vim.api.nvim_buf_delete, buf, { force = true })
+  end
+
+  -- gather(): any explorer registered at lib.nvim.explorer is a tree buffer ----
+  do
+    local explorer = require("lib.nvim.explorer")
+    local asked = nil
+    explorer.register({
+      name = "spec-tree",
+      filetypes = { "spec-tree" },
+      current_path = function(buf)
+        asked = buf
+        return "/from/the/registry"
+      end,
+    })
+    local buf = H.scratch({ "x" }, "spec-tree")
+    local signals = context.gather()
+    H.eq(signals.tree_path, "/from/the/registry", "a registered explorer answers the node path")
+    H.eq(asked, buf, "... asked with the tree buffer")
+    H.eq(
+      context.default_target(signals),
+      require("open.config").get().default_filemanager,
+      "... and the default target there is the file manager"
+    )
+    explorer.register({
+      name = "spec-tree",
+      filetypes = { "spec-tree" },
+      current_path = function()
+        error("boom")
+      end,
+    })
+    local ok, raised = pcall(context.gather)
+    H.ok(ok, "gather() does not error when an explorer adapter raises")
+    H.falsy(raised.tree_path, "... and has no tree_path then")
+    explorer.unregister("spec-tree")
+    H.falsy(context.gather().tree_path, "an unregistered explorer's buffer is no tree buffer")
     pcall(vim.api.nvim_buf_delete, buf, { force = true })
   end
 

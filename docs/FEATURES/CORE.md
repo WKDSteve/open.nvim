@@ -6,8 +6,9 @@ than belonging to any one of them.
 ## Context-aware dispatch
 
 `:Open` with no explicit target figures out what you mean from where your
-cursor is. In a Neo-tree, nvim-tree, or netrw buffer it takes the node under
-the cursor; otherwise it looks at `<cfile>`, `<cWORD>`, a visual selection,
+cursor is. In a tree buffer (netrw, Neo-tree, nvim-tree, oil, the own tree of
+filetree.nvim: every explorer registered at `lib.nvim.explorer`) it takes the
+node under the cursor; otherwise it looks at `<cfile>`, `<cWORD>`, a visual selection,
 and the buffer path, in that priority order, and decides between the
 configured file-manager handler and the configured browser handler based on
 whether the candidate text looks like a URL.

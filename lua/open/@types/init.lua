@@ -52,7 +52,7 @@
 
 ---Raw, target-agnostic signals gathered from the current editor state.
 ---@class OpenNvim.Signals
----@field tree_path   string|nil  Node path when the cursor is in a tree buffer (neo-tree/nvim-tree/netrw)
+---@field tree_path   string|nil  Node path when the cursor is in a tree buffer (netrw, or an explorer of lib.nvim.explorer)
 ---@field cfile       string|nil  Raw <cfile> text under the cursor, if any
 ---@field cfile_path  string|nil  cfile resolved to an existing path on disk, if any
 ---@field cword       string|nil  Raw <cWORD> text under the cursor, if any

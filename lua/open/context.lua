@@ -18,8 +18,9 @@
 ---   anything else → used verbatim as the resolved text
 ---
 --- Default heuristic (no explicit `arg`):
----   1. Tree-buffer node (neo-tree / nvim-tree / netrw) — wins if current
----      buffer is a recognised tree buffer.
+---   1. Tree-buffer node — wins if the current buffer is a tree buffer: netrw,
+---      or any explorer registered at `lib.nvim.explorer` (neo-tree, nvim-tree,
+---      oil, filetree.nvim's own tree, whatever a plugin adds there).
 ---   2. Path-oriented targets (filemanager, split, vsplit, tab):
 ---      <cfile> if it resolves to an existing path on disk, else buffer path (%).
 ---   3. All other targets (browser, notepad, …):
@@ -129,45 +130,6 @@ end
 -- Tree-buffer node resolution
 -- ---------------------------------------------------------------------------
 
----Node path when the current neo-tree buffer has a node under the cursor.
----@internal
----@return string|nil
-local function resolve_neotree_path()
-  local ok_m, manager = pcall(require, "neo-tree.sources.manager")
-  if not ok_m then return nil end
-
-  local buf = vim.api.nvim_get_current_buf()
-  local source = (vim.b[buf] and vim.b[buf].neo_tree_source) or "filesystem"
-
-  local ok_s, state = pcall(manager.get_state, source)
-  if not ok_s or not state then return nil end
-
-  if state.tree then
-    local ok_n, node = pcall(state.tree.get_node, state.tree)
-    if ok_n and node then
-      local path = node:get_id()
-      if type(path) == "string" and path ~= "" then return path end
-    end
-  end
-
-  return nil
-end
-
----Absolute path of the nvim-tree node under the cursor, if any.
----@internal
----@return string|nil
-local function resolve_nvimtree_path()
-  local ok, api = pcall(require, "nvim-tree.api")
-  if not ok then return nil end
-  local ok_n, node = pcall(function()
-    return api.tree.get_node_under_cursor()
-  end)
-  if ok_n and node and node.absolute_path and node.absolute_path ~= "" then
-    return node.absolute_path
-  end
-  return nil
-end
-
 ---The entry name on one line of a netrw listing, or nil when the line is not an entry.
 ---
 ---Supported: the thin list (`name`) and the long list (`name  size  <date>`). The date is
@@ -234,11 +196,15 @@ end
 local function resolve_tree_node_path()
   local buf = vim.api.nvim_get_current_buf()
   if not vim.api.nvim_buf_is_valid(buf) then return nil end
-  local ft = vim.bo[buf].filetype
-  if ft == "neo-tree" then return resolve_neotree_path() end
-  if ft == "NvimTree" then return resolve_nvimtree_path() end
-  if ft == "netrw" then return resolve_netrw_path() end
-  return nil
+  -- netrw stays here: its listing needs the line parser above (a long listing, a name with
+  -- spaces), where lib.nvim.explorer reads `<cfile>`.
+  if vim.bo[buf].filetype == "netrw" then return resolve_netrw_path() end
+  -- Every other tree answers through the one registry of explorers; a tree plugin that is not
+  -- installed, or an adapter that raises, answers nil there.
+  local ok, explorer = pcall(require, "lib.nvim.explorer")
+  if not ok then return nil end
+  local ok_path, path = pcall(explorer.current_path, buf)
+  return ok_path and path or nil
 end
 
 -- ---------------------------------------------------------------------------
