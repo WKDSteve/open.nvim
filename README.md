@@ -108,5 +108,6 @@ open.nvim is released under the [MIT License](https://opensource.org/licenses/MI
 
 - [buffer-ctx.nvim](https://github.com/WKDSteve/buffer-ctx.nvim): `:OpenInBrowser` of buffer-ctx.nvim delegates to the browser handler of open.nvim when it is installed. ([picture](assets/graphs/pair/buffer-ctx.nvim--open.nvim.png))
 - [gitsuite.nvim](https://github.com/WKDSteve/gitsuite.nvim): gitsuite.nvim opens the web address of a repository through the registry of open.nvim (`open.registry`) when it is installed. ([picture](assets/graphs/pair/gitsuite.nvim--open.nvim.png))
+- [gopath.nvim](https://github.com/WKDSteve/gopath.nvim): gopath.nvim hands a file it opens outside Neovim to the `default` handler of open.nvim (WSL-aware, shared handlers), when it is installed. ([picture](assets/graphs/pair/gopath.nvim--open.nvim.png))
 - [hover.nvim](https://github.com/WKDSteve/hover.nvim): hover.nvim opens the target it is showing with open.nvim (`open.open`), so a media file goes to its registered player and not to the file manager. ([picture](assets/graphs/pair/hover.nvim--open.nvim.png))
 <!-- connections:end -->
