@@ -4,6 +4,7 @@
 return {
   id = "open.terminal",
   feature = "open.terminal",
+  task = "open.nvim/abnahme-system-oeffner-von-hand-fenster-gehen-wirklich-auf",
   title = "open.nvim: <leader>ot on a file name opens a terminal split in that file's folder",
   engine = "rpc",
   sizes = { { rows = 16, cols = 100 } },

@@ -6,8 +6,9 @@ return {
   -- Lua module root of the project.
   plugin = "open",
   -- How the spec files are run: "auto" = sniffed per file, "h" = on the project's own TESTS/harness.lua,
-  -- "script" = a self-running script in its own process.
-  dialect = "h",
+  -- "script" = a self-running script in its own process. TESTS/sheets_spec.lua is busted style: each feature
+  -- sheet is a case of its own named `sheet:<id>`, the name `testing sheets report` finds its result by.
+  dialect = { ["TESTS/sheets_spec.lua"] = "busted", ["*"] = "h" },
   -- Dependencies (directory names) put on the runtimepath: $<NAME>_DIR, .deps/<name>, ../<name>,
   -- stdpath('data')/lazy/<name>.
   deps = { "lib.nvim", "ui.nvim" },
@@ -30,7 +31,8 @@ return {
     -- features_spec deliberately runs the reveal-in-file-manager security test, which starts the
     -- platform opener with the path "`echo sec34`" to prove the path is never interpreted:
     -- powershell (Windows), xdg-open (Linux), open (macOS).
-    spawn = { "powershell", "xdg-open", "open" },
+    -- TESTS/sheets_spec.lua starts each feature sheet's child editor (`nvim --embed`).
+    spawn = { "powershell", "xdg-open", "open", "nvim" },
   },
   -- The runner counts which commands, keymaps and autocommands the specs exercise (docs/SURFACE.md of testing.nvim);
   -- `scripts/test.sh surface` compares that with surface.baseline.json (a regression gate, not a percentage).

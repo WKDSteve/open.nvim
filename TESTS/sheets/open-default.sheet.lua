@@ -4,10 +4,19 @@
 return {
   id = "open.default",
   feature = "open.default",
+  task = "open.nvim/abnahme-system-oeffner-von-hand-fenster-gehen-wirklich-auf",
   title = "open.nvim: :Open default on a file name starts the system default application with that file",
   engine = "rpc",
   sizes = { { rows = 12, cols = 100 } },
-  fakes = { "explorer", "notepad", "powershell", "xdg-open", "open" },
+  -- the starters this sheet can reach: Windows, macOS and Linux open through explorer / open / xdg-open; WSL
+  -- (safety net, fixtures/openers.lua) through explorer.exe or rundll32.exe
+  fakes = {
+    "explorer",
+    "open",
+    "xdg-open",
+    "explorer.exe",
+    "rundll32.exe",
+  },
   steps = {
     {
       lua = [[_G.O = dofile(vim.fn.getcwd() .. "/TESTS/sheets/fixtures/openers.lua")

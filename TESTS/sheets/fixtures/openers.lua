@@ -8,7 +8,43 @@
 -- which `testing perf` then names as the callers.
 local M = {}
 
-M.programs = { "explorer", "notepad", "powershell", "xdg-open", "open" }
+---The last seven are the names the WSL branches of open.nvim and lib.nvim start (Windows programs reached through the
+---interop). `prepare` sends WSL down the Linux branch, so they are a safety net only: should one be started all the
+---same, it is a stand-in that records the call and no real Windows program opens. A sheet's `fakes` (at most 8) are
+---the names of this list that its feature can reach; `calls` reads all of them.
+M.programs = {
+  "explorer",
+  "notepad",
+  "powershell",
+  "xdg-open",
+  "open",
+  "explorer.exe",
+  "rundll32.exe",
+  "notepad.exe",
+  "cmd.exe",
+  "wslview",
+  "powershell.exe",
+  "pwsh.exe",
+}
+
+---WSL is no CI system, only the local `--wsl` run of `testing ci`. There the sheets take the Linux branch: the
+---platform check of lib.nvim answers "not WSL" for this editor, before open.nvim reads it. The WSL branch itself (paths
+---through `wslpath`, Windows programs) stays a line of the acceptance task.
+local function as_plain_linux()
+  local name = "lib.nvim.cross.platform.is_wsl"
+  local ok, is_wsl = pcall(require, name)
+  if not (ok and is_wsl()) then return end
+  local function no()
+    return false
+  end
+  package.loaded[name] = no
+  local cross = package.loaded["lib.nvim.cross"]
+  if type(cross) == "table" then cross.is_wsl = no end
+  assert(
+    package.loaded["open.platform"] == nil,
+    "open.platform was loaded before the WSL check was replaced"
+  )
+end
 
 ---Quiet messages, the Windows stand-in workaround, and a fresh folder as the working directory.
 ---@return string dir
@@ -18,6 +54,7 @@ function M.prepare()
   vim.o.showcmd = false
   vim.o.swapfile = false
   if vim.fn.exists("+messagesopt") == 1 then vim.o.messagesopt = "wait:0,history:500" end
+  as_plain_linux()
   if vim.fn.has("win32") == 1 then
     local path = vim.fn.getcwd() .. "/TESTS/sheets/fixtures/windows_stand_in_argv.lua"
     assert(load(table.concat(vim.fn.readfile(path), "\n"), "=windows stand-in argv"))(M.programs)

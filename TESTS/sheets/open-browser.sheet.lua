@@ -4,10 +4,20 @@
 return {
   id = "open.browser",
   feature = "open.browser",
+  task = "open.nvim/abnahme-system-oeffner-von-hand-fenster-gehen-wirklich-auf",
   title = "open.nvim: <leader>ob on an https link starts the default browser with that URL",
   engine = "rpc",
   sizes = { { rows = 12, cols = 100 } },
-  fakes = { "explorer", "notepad", "powershell", "xdg-open", "open" },
+  -- the starters this sheet can reach: Windows, macOS and Linux open through explorer / open / xdg-open; WSL
+  -- (safety net, fixtures/openers.lua) through wslview, explorer.exe or cmd.exe
+  fakes = {
+    "explorer",
+    "open",
+    "xdg-open",
+    "wslview",
+    "explorer.exe",
+    "cmd.exe",
+  },
   steps = {
     {
       lua = [[_G.O = dofile(vim.fn.getcwd() .. "/TESTS/sheets/fixtures/openers.lua")

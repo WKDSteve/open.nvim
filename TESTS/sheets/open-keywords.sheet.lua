@@ -4,6 +4,7 @@
 return {
   id = "open.keywords",
   feature = "open.keywords",
+  task = "open.nvim/abnahme-system-oeffner-von-hand-fenster-gehen-wirklich-auf",
   title = "open.nvim: :Open split gitmessage opens the commit template the git config names",
   engine = "rpc",
   sizes = { { rows = 16, cols = 100 } },

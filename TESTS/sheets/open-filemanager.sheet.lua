@@ -5,10 +5,21 @@
 return {
   id = "open.filemanager",
   feature = "open.filemanager",
+  task = "open.nvim/abnahme-system-oeffner-von-hand-fenster-gehen-wirklich-auf",
   title = "open.nvim: <leader>of on a folder name starts the system file manager on that folder",
   engine = "rpc",
   sizes = { { rows = 12, cols = 100 } },
-  fakes = { "explorer", "notepad", "powershell", "xdg-open", "open" },
+  -- the starters this sheet can reach: Windows powershell (the raise script, explorer as its fallback), macOS
+  -- open, Linux xdg-open; WSL (safety net, fixtures/openers.lua) powershell.exe, pwsh.exe or explorer.exe
+  fakes = {
+    "powershell",
+    "explorer",
+    "open",
+    "xdg-open",
+    "powershell.exe",
+    "pwsh.exe",
+    "explorer.exe",
+  },
   steps = {
     {
       lua = [[_G.O = dofile(vim.fn.getcwd() .. "/TESTS/sheets/fixtures/openers.lua")

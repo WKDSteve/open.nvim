@@ -4,10 +4,18 @@
 return {
   id = "open.notepad",
   feature = "open.notepad",
+  task = "open.nvim/abnahme-system-oeffner-von-hand-fenster-gehen-wirklich-auf",
   title = "open.nvim: :Open notepad on a word starts the GUI text editor on a temp file holding that word",
   engine = "rpc",
   sizes = { { rows = 12, cols = 100 } },
-  fakes = { "explorer", "notepad", "powershell", "xdg-open", "open" },
+  -- the starters this sheet can reach: Windows notepad, macOS open -e, Linux xdg-open; WSL (safety net,
+  -- fixtures/openers.lua) notepad.exe
+  fakes = {
+    "notepad",
+    "open",
+    "xdg-open",
+    "notepad.exe",
+  },
   steps = {
     {
       lua = [[_G.O = dofile(vim.fn.getcwd() .. "/TESTS/sheets/fixtures/openers.lua")
