@@ -11,4 +11,6 @@ doc/tags
 docs/map/
 
 # Claude Code scratch state (worktrees, local settings). Never source.
-.claude/
+/.claude/*
+!/.claude/settings.json
+!/.claude/hooks/
