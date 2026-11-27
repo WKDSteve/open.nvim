@@ -166,6 +166,16 @@ return function(H)
     local sub = menu_integration.submenu()
     H.ok(sub, "submenu() returns a wrapper when there are items")
     H.eq(type(sub.items), "table", "submenu()'s wrapper carries the item list")
+    H.eq(sub.name, "Open", "submenu(): the default label has no leading blanks")
+    H.ok(type(sub.icon) == "string" and sub.icon ~= "", "submenu(): the fly-out has an icon")
+    -- The glyph goes in the icon column, never into the label: a label that starts with
+    -- spaces indents its row past every other one.
+    for _, item in ipairs(url_items) do
+      if item.name and item.name ~= "separator" and not item.__heading then
+        H.ok(not item.name:match("^%s"), "no leading blank in " .. item.name)
+        H.ok(type(item.icon) == "string" and item.icon ~= "", "an icon for " .. item.name)
+      end
+    end
 
     -- Without ui.nvim (ui.contextmenu), items()/submenu() degrade to no
     -- entries instead of throwing (LUA-01) -------------------------------

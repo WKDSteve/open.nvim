@@ -28,6 +28,22 @@
 local M = {}
 
 ---@internal
+--- One glyph per entry, drawn in the renderer's icon column (`opts.icon`), never in the
+--- label: a label that starts with spaces or a glyph indents its row past every other one.
+--- ASCII fallback without a declared Nerd Font. Built on first use, not at load.
+---@return table<string, string>
+local function icons()
+  local nerd = require("lib.nvim.ui.nerd_font")
+  return {
+    open = nerd.glyph("F03CC", "o"), -- open-in-new
+    browser = nerd.glyph("F059F", "w"), -- web
+    manager = nerd.glyph("F024B", "d"), -- folder
+    terminal = nerd.glyph("F018D", ">"), -- console
+    links = nerd.glyph("F0337", "L"), -- link
+  }
+end
+
+---@internal
 ---Lazily load ui.contextmenu. This module is itself opt-in (never required
 ---by `open.setup()`); without ui.nvim there is nothing to build entries
 ---with, not a hard error.
@@ -64,6 +80,7 @@ function M.items(_opts)
 
   local context = require("open.context")
   local keymaps = cfg.keymaps or {}
+  local icon = icons()
   local out = {}
 
   context.with_cache(function()
@@ -77,31 +94,31 @@ function M.items(_opts)
 
     cm.group(
       out,
-      cm.entry(default_ctx ~= nil, "  Open", function()
+      cm.entry(default_ctx ~= nil, "Open", function()
         require("open").open(default_target)
-      end, keymaps.open_default)
+      end, keymaps.open_default, { icon = icon.open })
     )
 
     cm.group(
       out,
-      cm.entry(browser_ctx ~= nil and browser_ctx.is_url, "  Open in Browser", function()
+      cm.entry(browser_ctx ~= nil and browser_ctx.is_url, "Open in Browser", function()
         require("open").open(cfg.default_browser)
-      end, keymaps.open_browser),
-      cm.entry(fm_ctx ~= nil and fm_ctx.is_path, "  Reveal in File Manager", function()
+      end, keymaps.open_browser, { icon = icon.browser }),
+      cm.entry(fm_ctx ~= nil and fm_ctx.is_path, "Reveal in File Manager", function()
         require("open").open(cfg.default_filemanager)
-      end, keymaps.open_manager),
-      cm.entry(term_ctx ~= nil and term_ctx.is_path, "  Open in Terminal", function()
+      end, keymaps.open_manager, { icon = icon.manager }),
+      cm.entry(term_ctx ~= nil and term_ctx.is_path, "Open in Terminal", function()
         require("open").open("terminal")
-      end)
+      end, nil, { icon = icon.terminal })
     )
 
     -- Always available: scans the current buffer for links regardless of
     -- what is under the cursor, so it does not need context.resolve at all.
     cm.group(
       out,
-      cm.entry(true, "  List Links Here", function()
+      cm.entry(true, "List Links Here", function()
         require("open.viewer").run({ scope = "%" })
-      end)
+      end, nil, { icon = icon.links })
     )
   end)
 
@@ -112,12 +129,12 @@ end
 --- entry, for hosts that prefer an "Open ▸" fly-out instead of inline
 --- entries. Returns nil when there is nothing to show (including when
 --- ui.nvim is not installed).
----@param label? string  submenu label (default "  Open")
+---@param label? string  submenu label (default "Open")
 ---@return table|nil
 function M.submenu(label)
   local cm = contextmenu()
   if not cm then return nil end
-  return cm.submenu(label or "  Open", M.items())
+  return cm.submenu(label or "Open", M.items(), { icon = icons().open })
 end
 
 return M

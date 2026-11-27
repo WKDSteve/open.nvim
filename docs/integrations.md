@@ -97,7 +97,7 @@ local items = require("open.integrations.menu").items()
 -- prepend/append `items` to your own menu table, then menu.open(composed)
 
 -- or a single fly-out entry:
-local sub = require("open.integrations.menu").submenu()  -- { name = "  Open", items = {…} } | nil
+local sub = require("open.integrations.menu").submenu()  -- { name = "Open", items = {…} } | nil
 ```
 
 Since open.nvim acts on any buffer — including a focused Neo-tree / nvim-tree
