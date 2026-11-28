@@ -82,8 +82,8 @@ require("open").setup({
   -- Handler-choice picker for ambiguous no-target invocations. Off by default.
   picker = { enabled = false },
 
-  -- Opt-out for open.integrations.menu (nvzone/menu entries). open.nvim
-  -- never opens nvzone/menu itself; this only gates whether that module's
+  -- Opt-out for open.integrations.menu (context-menu entries). open.nvim
+  -- never opens a context menu itself; this only gates whether that module's
   -- M.items()/M.submenu() return entries.
   menu = { enable = true },
 
@@ -272,11 +272,11 @@ require("open").setup({
 })
 ```
 
-open.nvim has no `nvzone/menu` dependency and never opens a context menu
+open.nvim has no menu dependency and never opens a context menu
 itself — `open.integrations.menu` only *contributes* entries for a host
 (typically your own `<RightMouse>` dispatcher) to compose into its own menu.
 This option is the single opt-out for that; see
-[docs/integrations.md](integrations.md#nvzonemenu-context-menu).
+[docs/integrations.md](integrations.md#context-menu).
 
 ## `viewer`
 

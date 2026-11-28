@@ -1,8 +1,8 @@
 ---@module 'open.integrations.menu'
----@brief Context-aware menu entries for nvzone/menu (soft, opt-in integration).
+---@brief Context-aware menu entries (soft, opt-in integration).
 ---@description
 --- open.nvim does not depend on a menu plugin. It *provides* a list of
---- entries in the shape nvzone/menu expects, built with
+--- entries in the context-menu entry shape, built with
 --- `ui.contextmenu`'s helpers, and a host — typically the user's own
 --- RightMouse dispatcher — composes them into its own menu for the current
 --- buffer, e.g.:
@@ -69,7 +69,7 @@ end
 --- disabled, or nothing in the current context resolves to anything, so a
 --- host can safely `vim.list_extend` it unconditionally.
 ---@param _opts? table  reserved for future use
----@return table[]  nvzone/menu entry list (possibly empty)
+---@return table[]  context-menu entry list (possibly empty)
 function M.items(_opts)
   local cm = contextmenu()
   if not cm then return {} end

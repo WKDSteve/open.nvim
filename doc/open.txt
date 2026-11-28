@@ -775,7 +775,7 @@ Reports:
     integrations/
       urlview.lua           urlview.nvim "open_in_browser" action (opt-in)
       telescope.lua         telescope.nvim handler-picker source (opt-in)
-      menu.lua              nvzone/menu context-aware entries (opt-in)
+      menu.lua              context-aware context-menu entries (opt-in)
 
 Each leaf module exposes only plain functions or a `register_all(fn)` entry
 point; `init.lua` is the only place that registers a user command.

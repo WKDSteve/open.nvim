@@ -130,11 +130,10 @@ resolvers only run when the keyword is actually used.
   (user overrides/additions, default `{}`)
 - **Docs:** [`docs/keywords.md`](../keywords.md)
 
-## Right-click context menu (nvzone/menu)
+## Right-click context menu
 
 `open.integrations.menu` contributes entries — Open, Open in Browser,
-Reveal in File Manager, Open in Terminal, List Links Here — in the shape
-[nvzone/menu](https://github.com/nvzone/menu) expects, self-gated against
+Reveal in File Manager, Open in Terminal, List Links Here — in the context-menu entry shape, self-gated against
 the same `open.context` resolution `:Open` itself uses: "Open in Browser"
 only appears when the resolved target is a URL, "Reveal in File Manager" /
 "Open in Terminal" only when it resolves to an existing path. open.nvim has
@@ -144,7 +143,7 @@ its own menu.
 
 - **Module:** `open/integrations/menu.lua` (`M.items`, `M.submenu`)
 - **Config:** `opts.menu.enable` (default `true`)
-- **Docs:** [`docs/integrations.md`](../integrations.md#nvzonemenu-context-menu)
+- **Docs:** [`docs/integrations.md`](../integrations.md#context-menu)
 
 ## Health check
 

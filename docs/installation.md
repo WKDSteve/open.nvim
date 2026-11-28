@@ -22,7 +22,6 @@ Optional, each degrading to nothing when absent:
 | [images.nvim](https://github.com/WKDSteve/images.nvim) | An inline image viewer instead of the system one |
 | telescope.nvim | An opt-in picker source for the link viewer |
 | [ui.nvim](https://github.com/WKDSteve/ui.nvim) | Backs the handler-choice picker (`opts.picker.enabled = true`) and the `open.integrations.menu` context-menu entries |
-| [nvzone/menu](https://github.com/nvzone/menu) | A host for the context-menu entries — see [integrations.md](integrations.md) |
 
 `wslview` is declared in [install.json](install.json) and read by lib.nvim's
 [deps module](https://github.com/WKDSteve/lib.nvim/blob/main/lua/lib/nvim/deps/README.md).

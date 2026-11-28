@@ -77,10 +77,9 @@ that handler would actually open (path or URL) for the buffer you called it
 from — so you can tell `notepad` and `filemanager` apart before committing.
 `<CR>` dispatches the handler exactly like `:Open <key>` would.
 
-## nvzone/menu (context menu)
+## Context menu
 
-`open.integrations.menu` contributes context-aware entries in the shape
-[nvzone/menu](https://github.com/nvzone/menu) expects — it does **not**
+`open.integrations.menu` contributes context-aware entries in the context-menu entry shape — it does **not**
 depend on `menu` and never opens it itself. The entries are built with
 [ui.nvim](https://github.com/WKDSteve/ui.nvim)'s `ui.contextmenu` helpers;
 without ui.nvim installed, `M.items()`/`M.submenu()` simply return no

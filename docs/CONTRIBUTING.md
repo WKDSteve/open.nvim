@@ -57,7 +57,7 @@ Linux, macOS, native Windows and WSL — most of the bugs live exactly there.
 | --- | --- |
 | `lua/open/handlers/` | One file per destination: `default`, `browser`, `filemanager`, `notepad`, `terminal`, `image`, `nvim_internal` |
 | `lua/open/viewer/` | The link listing and its scanner: buffer, selection, directory or project, then the picker and the export modes |
-| `lua/open/integrations/` | `menu.lua` (nvzone/menu entries), `telescope.lua`, `urlview.lua` |
+| `lua/open/integrations/` | `menu.lua` (context-menu entries), `telescope.lua`, `urlview.lua` |
 | `lua/open/bindings/` | `usrcmds.lua` — the `:Open` route tree and completion — and `keymaps.lua` |
 | `lua/open/office_open.lua` | The `BufReadCmd` redirect for binary office documents |
 | `lua/open/config/` | `DEFAULTS.lua` and `setup()` validation |
